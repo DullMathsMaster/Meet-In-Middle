@@ -26,25 +26,49 @@ def load_office_locations() -> Dict[str, Location]:
     return offices
 
 
-def load_travel_data(file_path: str = None) -> Dict:
-    """
-    Load travel data from file or return mock data structure.
-    
-    In production, this would load actual OAG flight schedule and CO2 data.
-    """
-    if file_path:
-        try:
-            with open(file_path, 'r') as f:
-                return json.load(f)
-        except FileNotFoundError:
-            pass
-    
-    # Return mock data structure
-    return {
-        "flights": {},
-        "co2_emissions": {}
-    }
+import polars as pl
 
+def load_travel_data(file_path: str = "emissions.csv") -> dict:
+    """
+    Load travel data from emissions.csv
+    """
+    try:
+        df = pl.read_csv(file_path)
+        # Compute per passenger CO2
+        df = df.with_columns(
+            (pl.col("ESTIMATED_CO2_TOTAL_TONNES") / pl.col("SEATS")).alias("CO2_PER_PAX_TONNES")
+        )
+
+        # Reduce to useful columns
+        df = df.select([
+            "DEPARTURE_AIRPORT",
+            "ARRIVAL_AIRPORT",
+            "SCHEDULED_DEPARTURE_DATE",
+            "CO2_PER_PAX_TONNES"
+        ])
+
+        # Convert to dictionary for your optimizer
+        # flights_dict[origin][destination][date] = CO2 per pax
+        flights_dict = {}
+        for row in df.iter_rows(named=True):
+            origin = row['DEPARTURE_AIRPORT']
+            dest = row['ARRIVAL_AIRPORT']
+            date = row['SCHEDULED_DEPARTURE_DATE']
+            co2 = row['CO2_PER_PAX_TONNES']
+
+            flights_dict.setdefault(origin, {}).setdefault(dest, {})[date] = co2
+
+        return {
+            "flights": flights_dict,
+            "co2_emissions": flights_dict
+        }
+
+    except FileNotFoundError:
+        print(f"Error: {file_path} not found")
+        return {
+            "flights": {},
+            "co2_emissions": {}
+        }
 
 def parse_input_json(input_data: Dict) -> Dict:
     """
