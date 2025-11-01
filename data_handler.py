@@ -41,33 +41,101 @@ def load_travel_data(file_path: str = "emissions.csv") -> dict:
             csv_path = data_dir / csv_path
 
         df = pl.read_csv(str(csv_path))
-        # Compute per passenger CO2
-        df = df.with_columns(
-            (pl.col("ESTIMATED_CO2_TOTAL_TONNES") / pl.col("SEATS")).alias("CO2_PER_PAX_TONNES")
-        )
 
-        # Reduce to useful columns
-        df = df.select([
-            "DEPARTURE_AIRPORT",
-            "ARRIVAL_AIRPORT",
-            "SCHEDULED_DEPARTURE_DATE",
-            "CO2_PER_PAX_TONNES"
-        ])
-
-        # Convert to dictionary for your optimizer
-        # flights_dict[origin][destination][date] = CO2 per pax
+        # Primary detailed emissions file format (emissions.csv)
         flights_dict = {}
-        for row in df.iter_rows(named=True):
-            origin = row['DEPARTURE_AIRPORT']
-            dest = row['ARRIVAL_AIRPORT']
-            date = row['SCHEDULED_DEPARTURE_DATE']
-            co2 = row['CO2_PER_PAX_TONNES']
+        if set(["DEPARTURE_AIRPORT", "ARRIVAL_AIRPORT", "SCHEDULED_DEPARTURE_DATE", "ESTIMATED_CO2_TOTAL_TONNES", "SEATS"]).issubset(set(df.columns)):
+            # Compute per passenger CO2 and normalize units to kilograms per passenger
+            # ESTIMATED_CO2_TOTAL_TONNES is the total emissions for the aircraft (tonnes).
+            # Convert to kg and divide by seats to get per-passenger kg.
+            df = df.with_columns(
+                ((pl.col("ESTIMATED_CO2_TOTAL_TONNES") * 1000.0) / pl.col("SEATS")).alias("CO2_PER_PAX_KG")
+            )
 
-            flights_dict.setdefault(origin, {}).setdefault(dest, {})[date] = co2
+            # Reduce to useful columns
+            df = df.select([
+                "DEPARTURE_AIRPORT",
+                "ARRIVAL_AIRPORT",
+                "SCHEDULED_DEPARTURE_DATE",
+                "CO2_PER_PAX_KG"
+            ])
+
+            # Convert to dictionary for your optimizer
+            # flights_dict[origin][destination][date] = CO2 per pax (kg)
+            for row in df.iter_rows(named=True):
+                origin = row['DEPARTURE_AIRPORT']
+                dest = row['ARRIVAL_AIRPORT']
+                date = row['SCHEDULED_DEPARTURE_DATE']
+                co2 = row['CO2_PER_PAX_KG']
+
+                flights_dict.setdefault(origin, {}).setdefault(dest, {})[date] = co2
+
+        # Additionally, try to load route-level average CO2 dataset if present in datasets/
+        avg_map = {}
+        try:
+            avg_path = csv_path.parent / "datasets" / "average_co2_by_route.csv"
+            if avg_path.exists():
+                avg_df = pl.read_csv(str(avg_path))
+                # Prefer a pre-computed per-person kg column, fall back to tonnes->per-passenger conversion
+                if 'ROUTE' in avg_df.columns:
+                    AVG_SEATS = 150  # fallback assumption when only per-flight tonnes is provided
+                    for row in avg_df.iter_rows(named=True):
+                        route = row.get('ROUTE')
+                        if not route or '-' not in route:
+                            continue
+                        origin, dest = route.split('-', 1)
+
+                        per_pax_kg = None
+                        # Check for an explicit per-person kg column
+                        if 'AVERAGE_CO2_PER_PERSON_KG' in avg_df.columns:
+                            try:
+                                per_pax_kg = float(row.get('AVERAGE_CO2_PER_PERSON_KG'))
+                            except Exception:
+                                per_pax_kg = None
+
+                        # If not present, try converting from average tonnes (per flight) -> per pax kg
+                        if per_pax_kg is None and 'AVERAGE_CO2_TONNES' in avg_df.columns:
+                            try:
+                                avg_tonnes = float(row.get('AVERAGE_CO2_TONNES'))
+                                per_pax_kg = (avg_tonnes * 1000.0) / AVG_SEATS
+                            except Exception:
+                                per_pax_kg = None
+
+                        if per_pax_kg is not None:
+                            entry = {'AVERAGE': per_pax_kg}
+                            # If the CSV contains the per-flight tonnes, include the per-flight kg value too
+                            if 'AVERAGE_CO2_TONNES' in avg_df.columns:
+                                try:
+                                    avg_tonnes = float(row.get('AVERAGE_CO2_TONNES'))
+                                    entry['PER_FLIGHT_KG'] = avg_tonnes * 1000.0
+                                except Exception:
+                                    pass
+                            avg_map.setdefault(origin, {}).setdefault(dest, {}).update(entry)
+        except Exception:
+            # quietly ignore missing/parse errors for average dataset
+            avg_map = {}
+
+        # Load airports coordinates mapping (iata -> (lat, lon)) to support distance lookups
+        airports_coords = {}
+        try:
+            airports_path = csv_path.parent / "datasets" / "airports_with_iata.csv"
+            if airports_path.exists():
+                a_df = pl.read_csv(str(airports_path))
+                # Columns expected: iata_code, latitude_deg, longitude_deg
+                for row in a_df.iter_rows(named=True):
+                    iata = row.get('iata_code') or row.get('IATA_CODE')
+                    lat = row.get('latitude_deg')
+                    lon = row.get('longitude_deg')
+                    if iata and lat is not None and lon is not None and str(iata).strip():
+                        airports_coords[str(iata).strip()] = (float(lat), float(lon))
+        except Exception:
+            airports_coords = {}
 
         return {
             "flights": flights_dict,
-            "co2_emissions": flights_dict
+            "co2_emissions": flights_dict,
+            "average_co2": avg_map,
+            "airports_coords": airports_coords,
         }
 
     except FileNotFoundError:

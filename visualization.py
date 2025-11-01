@@ -46,18 +46,34 @@ def create_map_visualization(solutions: List[Solution],
     )
     
     # Add meeting location marker
+    # If an office has the same name as the meeting location, include its travel info
+    same_office_info = []
+    for office_name, travel in best_solution.attendee_details.items():
+        if office_name == meeting_location.name:
+            same_office_info.append(f"<br><b>Office: {office_name}</b><br>Travel Hours: {travel.total_hours:.2f}<br>CO2: {travel.total_co2:.2f} kg")
+
+    meeting_popup = (
+        f"<b>Meeting Location: {meeting_location.name}</b><br>"
+        f"Total CO2: {best_solution.total_co2:.2f} kg<br>"
+        f"Avg Travel: {best_solution.average_travel_hours:.2f} hours<br>"
+        f"Fairness Score: {best_solution.fairness_score:.4f}"
+    )
+    if same_office_info:
+        meeting_popup += "<hr>" + "".join(same_office_info)
+
+    # Destination marker should be prominent and red
     folium.Marker(
         [meeting_location.lat, meeting_location.lon],
-        popup=f"<b>Meeting Location: {meeting_location.name}</b><br>"
-              f"Total CO2: {best_solution.total_co2:.2f} kg<br>"
-              f"Avg Travel: {best_solution.average_travel_hours:.2f} hours<br>"
-              f"Fairness Score: {best_solution.fairness_score:.4f}",
+        popup=meeting_popup,
         tooltip=meeting_location.name,
-        icon=folium.Icon(color='green', icon='star', prefix='fa')
+        icon=folium.Icon(color='red', icon='star', prefix='fa')
     ).add_to(m)
     
     # Add office locations and travel paths
     for office_name, travel in best_solution.attendee_details.items():
+        # If the office is the meeting location, we already included its info in the meeting popup
+        if office_name == meeting_location.name:
+            continue
         office_location = office_locations.get(office_name)
         if not office_location:
             continue

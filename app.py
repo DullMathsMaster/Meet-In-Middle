@@ -27,7 +27,7 @@ app = Flask(__name__)
 
 # Initialize optimizer
 office_locations = load_office_locations()
-travel_data = load_travel_data("emissions.csv")
+travel_data = load_travel_data("datasets/emissions.csv")
 optimizer = MeetingOptimizer(travel_data, office_locations)
 
 

@@ -67,12 +67,18 @@ class MeetingOptimizer:
         self.travel_data = travel_data
         self.office_locations = office_locations
         self.candidate_cities = self._load_candidate_cities()
+        # If travel_data provides airport coordinates, validate candidate IATA codes
+        try:
+            self._check_candidate_iata()
+        except Exception:
+            # don't raise during init; validation is best-effort
+            pass
     
     def _load_candidate_cities(self) -> Dict[str, Location]:
         """Load candidate meeting cities."""
         # Major international cities that could host meetings
         candidates = {
-            "New York": Location("New York", 40.7128, -74.0060, "NYC"),
+            "New York": Location("New York", 40.7128, -74.0060, "JFK"),
             "London": Location("London", 51.5074, -0.1278, "LHR"),
             "Singapore": Location("Singapore", 1.3521, 103.8198, "SIN"),
             "Dubai": Location("Dubai", 25.2048, 55.2708, "DXB"),
@@ -85,15 +91,77 @@ class MeetingOptimizer:
             "Mumbai": Location("Mumbai", 19.0760, 72.8777, "BOM"),
             "Shanghai": Location("Shanghai", 31.2304, 121.4737, "PVG"),
             "Los Angeles": Location("Los Angeles", 34.0522, -118.2437, "LAX"),
+            "San Francisco": Location("San Francisco", 37.7749, -122.4194, "SFO"),
             "Chicago": Location("Chicago", 41.8781, -87.6298, "ORD"),
             "Toronto": Location("Toronto", 43.6532, -79.3832, "YYZ"),
             "Berlin": Location("Berlin", 52.5200, 13.4050, "BER"),
             "Barcelona": Location("Barcelona", 41.3851, 2.1734, "BCN"),
+            "Madrid": Location("Madrid", 40.4168, -3.7038, "MAD"),
+            "Rome": Location("Rome", 41.9028, 12.4964, "FCO"),
             "Istanbul": Location("Istanbul", 41.0082, 28.9784, "IST"),
-            "Bangkok": Location("Bangkok", 13.7563, 100.5018, "BKK"),
+            "Athens": Location("Athens", 37.9838, 23.7275, "ATH"),
+            "Stockholm": Location("Stockholm", 59.3293, 18.0686, "ARN"),
+            "Oslo": Location("Oslo", 59.9139, 10.7522, "OSL"),
+            "Helsinki": Location("Helsinki", 60.1699, 24.9384, "HEL"),
+            "Copenhagen": Location("Copenhagen", 55.6761, 12.5683, "CPH"),
+            "Zurich": Location("Zurich", 47.3769, 8.5417, "ZRH"),
+            "Brussels": Location("Brussels", 50.8503, 4.3517, "BRU"),
+            "Vienna": Location("Vienna", 48.2082, 16.3738, "VIE"),
+            "Warsaw": Location("Warsaw", 52.2297, 21.0122, "WAW"),
+            "Prague": Location("Prague", 50.0755, 14.4378, "PRG"),
+            "Budapest": Location("Budapest", 47.4979, 19.0402, "BUD"),
+            "Moscow": Location("Moscow", 55.7558, 37.6176, "SVO"),
             "Seoul": Location("Seoul", 37.5665, 126.9780, "ICN"),
+            "Beijing": Location("Beijing", 39.9042, 116.4074, "PEK"),
+            "Bangkok": Location("Bangkok", 13.7563, 100.5018, "BKK"),
+            "Kuala Lumpur": Location("Kuala Lumpur", 3.1390, 101.6869, "KUL"),
+            "Jakarta": Location("Jakarta", -6.2088, 106.8456, "CGK"),
+            "Manila": Location("Manila", 14.5995, 120.9842, "MNL"),
+            "Ho Chi Minh City": Location("Ho Chi Minh City", 10.8231, 106.6297, "SGN"),
+            "Delhi": Location("Delhi", 28.7041, 77.1025, "DEL"),
+            "Bangalore": Location("Bangalore", 12.9716, 77.5946, "BLR"),
+            "Chennai": Location("Chennai", 13.0827, 80.2707, "MAA"),
+            "Sao Paulo": Location("Sao Paulo", -23.5505, -46.6333, "GRU"),
+            "Rio de Janeiro": Location("Rio de Janeiro", -22.9068, -43.1729, "GIG"),
+            "Buenos Aires": Location("Buenos Aires", -34.6037, -58.3816, "EZE"),
+            "Mexico City": Location("Mexico City", 19.4326, -99.1332, "MEX"),
+            "Lima": Location("Lima", -12.0464, -77.0428, "LIM"),
+            "Bogota": Location("Bogota", 4.7110, -74.0721, "BOG"),
+            "Santiago": Location("Santiago", -33.4489, -70.6693, "SCL"),
+            "Johannesburg": Location("Johannesburg", -26.2041, 28.0473, "JNB"),
+            "Cape Town": Location("Cape Town", -33.9249, 18.4241, "CPT"),
+            "Nairobi": Location("Nairobi", -1.2921, 36.8219, "NBO"),
+            "Cairo": Location("Cairo", 30.0444, 31.2357, "CAI"),
+            "Tehran": Location("Tehran", 35.6892, 51.3890, "IKA"),
+            "Riyadh": Location("Riyadh", 24.7136, 46.6753, "RUH"),
         }
         return candidates
+
+    def _check_candidate_iata(self):
+        """Best-effort check that candidate city IATA codes exist in travel_data airports map.
+
+        Prints a short summary of any missing codes so you can update candidates or the airports dataset.
+        """
+        airports_coords = self.travel_data.get('airports_coords', {}) if isinstance(self.travel_data, dict) else {}
+        if not airports_coords:
+            print("[info] No airports_coords found in travel_data; skipping candidate IATA validation.")
+            return
+
+        missing = []
+        for city, loc in self.candidate_cities.items():
+            code = (loc.code or '').strip()
+            if not code:
+                missing.append((city, code))
+            elif code not in airports_coords:
+                missing.append((city, code))
+
+        if not missing:
+            print(f"[info] All {len(self.candidate_cities)} candidate IATA codes found in airports dataset.")
+        else:
+            print(f"[warning] {len(missing)} candidate IATA codes were NOT found in airports dataset. Sample:")
+            for city, code in missing[:20]:
+                print(f"  - {city}: '{code}'")
+            print("If codes are missing, either update the candidate code or add the airport to datasets/airports_with_iata.csv")
     
     def calculate_distance(self, loc1: Location, loc2: Location) -> float:
         """Calculate great circle distance between two locations (km)."""
@@ -108,6 +176,84 @@ class MeetingOptimizer:
         c = 2 * math.asin(math.sqrt(a))
         
         return R * c
+
+    def get_co2_value(self, from_iata: str, to_iata: str, date: Optional[str] = None,
+                      per_person: bool = True, avg_seats: int = 150) -> Optional[float]:
+        """
+        Return CO2 either per person (kg) or per flight (kg) for a given route.
+
+        Lookup order:
+        1. If a date is provided and a dated detailed flight exists, use that (stored as kg/pax).
+        2. If route-level averages exist in travel_data['average_co2'], prefer explicit per-person kg.
+           If per-flight kg is available in the averages data, use that when per_person=False.
+        3. If none of the above, estimate using distance and the estimator (returns kg/pax),
+           and convert to per-flight by multiplying by avg_seats if requested.
+
+        Returns kg (per person if per_person=True, otherwise per flight total kg). Returns None
+        only if route can't be resolved and distance can't be estimated.
+        """
+        td = self.travel_data or {}
+
+        # 1) dated detailed flight (kg per pax)
+        if date:
+            dated = td.get('co2_emissions', {}).get(from_iata, {}).get(to_iata, {})
+            if isinstance(dated, dict) and date in dated:
+                per_pax = dated[date]
+                if per_person:
+                    return per_pax
+                else:
+                    return per_pax * avg_seats
+
+        # 2) averages
+        avg_entry = td.get('average_co2', {}).get(from_iata, {}).get(to_iata, {})
+        if not avg_entry:
+            # try reverse direction
+            avg_entry = td.get('average_co2', {}).get(to_iata, {}).get(from_iata, {})
+
+        if avg_entry:
+            per_pax = avg_entry.get('AVERAGE')
+            per_flight = avg_entry.get('PER_FLIGHT_KG')
+            if per_pax is not None:
+                if per_person:
+                    return per_pax
+                else:
+                    if per_flight is not None:
+                        return per_flight
+                    else:
+                        return per_pax * avg_seats
+
+        # 3) fallback: estimate from distance
+        # Try to get coordinates
+        origin_loc = None
+        dest_loc = None
+        # Check office locations and candidate cities
+        for name, loc in self.office_locations.items():
+            if (loc.code or '').strip() == from_iata:
+                origin_loc = loc
+                break
+        for name, loc in self.candidate_cities.items():
+            if (loc.code or '').strip() == to_iata:
+                dest_loc = loc
+                break
+
+        if origin_loc is None or dest_loc is None:
+            airports_coords = td.get('airports_coords', {})
+            origin_coords = airports_coords.get(from_iata)
+            dest_coords = airports_coords.get(to_iata)
+            if origin_coords and dest_coords:
+                origin_loc = Location(from_iata, origin_coords[0], origin_coords[1], from_iata)
+                dest_loc = Location(to_iata, dest_coords[0], dest_coords[1], to_iata)
+
+        if origin_loc and dest_loc:
+            distance_km = self.calculate_distance(origin_loc, dest_loc)
+            per_pax_est = self.estimate_co2(distance_km, passengers=1)
+            if per_person:
+                return per_pax_est
+            else:
+                return per_pax_est * avg_seats
+
+        # Nothing found
+        return None
     
     def estimate_flight_time(self, distance_km: float) -> float:
         """Estimate flight time in hours based on distance."""
@@ -125,6 +271,8 @@ class MeetingOptimizer:
         Uses average: ~115g CO2 per passenger per km for short-haul,
         ~180g for medium, ~260g for long-haul.
         """
+
+
         if distance_km < 1500:
             return distance_km * 0.115 * passengers
         elif distance_km < 4000:
@@ -151,6 +299,55 @@ class MeetingOptimizer:
                         mode='flight'
                     )
                 )
+        # If no date-specific options, try route-level average CO2 (from dataset)
+        if not options:
+            avg_map = self.travel_data.get('average_co2', {})
+            avg_entry = avg_map.get(from_iata, {}).get(to_iata, {}) if avg_map else None
+            avg_val = None
+            if isinstance(avg_entry, dict):
+                avg_val = avg_entry.get('AVERAGE')
+            # also try reverse direction (some datasets store DEST-ORIG)
+            if avg_val is None:
+                rev_entry = avg_map.get(to_iata, {}).get(from_iata, {}) if avg_map else None
+                if isinstance(rev_entry, dict):
+                    avg_val = rev_entry.get('AVERAGE')
+
+            if avg_val is not None:
+                # Determine distance between the two airports/locations
+                distance_km = None
+                # Prefer office/candidate Location objects
+                origin_loc_obj = self.office_locations.get(from_loc)
+                dest_loc_obj = self.candidate_cities.get(to_loc)
+                if origin_loc_obj and dest_loc_obj:
+                    distance_km = self.calculate_distance(origin_loc_obj, dest_loc_obj)
+                else:
+                    # Fallback to airports coords provided by data_handler
+                    airports_coords = self.travel_data.get('airports_coords', {})
+                    origin_coords = airports_coords.get(from_iata)
+                    dest_coords = airports_coords.get(to_iata)
+                    if origin_coords and dest_coords:
+                        origin_loc_obj = Location(from_loc, origin_coords[0], origin_coords[1], from_iata)
+                        dest_loc_obj = Location(to_loc, dest_coords[0], dest_coords[1], to_iata)
+                        distance_km = self.calculate_distance(origin_loc_obj, dest_loc_obj)
+
+                # If we couldn't find coords, still add an option using availability_start
+                depart_time = availability_start
+                if distance_km is None:
+                    est_hours = self.estimate_flight_time(1000)  # fallback estimate
+                else:
+                    est_hours = self.estimate_flight_time(distance_km)
+
+                options.append(
+                    TravelOption(
+                        from_location=from_loc,
+                        to_location=to_loc,
+                        departure_time=depart_time,
+                        arrival_time=depart_time + timedelta(hours=est_hours),
+                        co2_per_passenger=avg_val,
+                        mode='flight'
+                    )
+                )
+
         return options
 
     
@@ -230,9 +427,9 @@ class MeetingOptimizer:
         if end_time.tzinfo:
             end_time = end_time.replace(tzinfo=None)
         
-        event_hours = event_duration.get('days', 0) * 24 + event_duration.get('hours', 0)
-        
-        solutions = []
+            event_hours = event_duration.get('days', 0) * 24 + event_duration.get('hours', 0)
+
+            solutions = []
         
         # Evaluate each candidate city
         for city_name, city_location in self.candidate_cities.items():
@@ -351,17 +548,8 @@ class MeetingOptimizer:
             event_span_end = max(all_departure_times) if all_departure_times else end_time
             
             fairness_score = self.calculate_fairness_score(travel_hours_dict)
-            
-            # Normalize scores for comparison (lower is better)
-            max_possible_co2 = total_co2 * 2  # Estimate
-            max_possible_fairness = fairness_score * 2  # Estimate
-            
-            normalized_co2 = (total_co2 / max_possible_co2) if max_possible_co2 > 0 else 0
-            normalized_fairness = (fairness_score / max_possible_fairness) if max_possible_fairness > 0 else 0
-            
-            # Combined score (lower is better)
-            combined_score = (co2_weight * normalized_co2 + fairness_weight * normalized_fairness)
-            
+
+            # Create Solution object (scoring is applied after evaluating all cities)
             solution = Solution(
                 location=city_name,
                 event_dates={
@@ -382,11 +570,38 @@ class MeetingOptimizer:
                 attendee_details=attendee_travels
             )
             
-            solutions.append((combined_score, solution))
+            # Append raw solution with its raw metrics; we'll normalize/sort later
+            solutions.append((solution, total_co2, fairness_score))
         
-        # Sort by combined score and return top N
-        solutions.sort(key=lambda x: x[0])
-        return [sol[1] for sol in solutions[:top_n]]
+        # If no solutions found, return empty
+        if not solutions:
+            return []
+
+        # Compute min-max across total_co2 and fairness to normalize
+        co2_values = [t[1] for t in solutions]
+        fairness_values = [t[2] for t in solutions]
+        min_co2, max_co2 = min(co2_values), max(co2_values)
+        min_fair, max_fair = min(fairness_values), max(fairness_values)
+
+        scored = []
+        for sol_obj, sol_co2, sol_fair in solutions:
+            if max_co2 > min_co2:
+                norm_co2 = (sol_co2 - min_co2) / (max_co2 - min_co2)
+            else:
+                norm_co2 = 0.0
+
+            # For fairness higher = worse; normalize so higher -> larger normalized value
+            if max_fair > min_fair:
+                norm_fair = (sol_fair - min_fair) / (max_fair - min_fair)
+            else:
+                norm_fair = 0.0
+
+            combined_score = co2_weight * norm_co2 + fairness_weight * norm_fair
+            scored.append((combined_score, sol_obj))
+
+        # Sort by combined score (lower is better) and return top N Solution objects
+        scored.sort(key=lambda x: x[0])
+        return [t[1] for t in scored[:top_n]]
     
     def solution_to_dict(self, solution: Solution) -> Dict:
         """Convert Solution object to dictionary format for JSON output."""
