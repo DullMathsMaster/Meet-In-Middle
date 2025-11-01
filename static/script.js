@@ -1,25 +1,6 @@
 // Main JavaScript for the meeting location optimizer
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Weight sliders
-    const co2WeightSlider = document.getElementById('co2-weight');
-    const fairnessWeightSlider = document.getElementById('fairness-weight');
-    const co2WeightValue = document.getElementById('co2-weight-value');
-    const fairnessWeightValue = document.getElementById('fairness-weight-value');
-
-    co2WeightSlider.addEventListener('input', function() {
-        co2WeightValue.textContent = this.value;
-        // Auto-adjust fairness to maintain balance
-        fairnessWeightSlider.value = (1 - parseFloat(this.value)).toFixed(1);
-        fairnessWeightValue.textContent = fairnessWeightSlider.value;
-    });
-
-    fairnessWeightSlider.addEventListener('input', function() {
-        fairnessWeightValue.textContent = this.value;
-        co2WeightSlider.value = (1 - parseFloat(this.value)).toFixed(1);
-        co2WeightValue.textContent = co2WeightSlider.value;
-    });
-
     // Optimize button
     document.getElementById('optimize-btn').addEventListener('click', optimizeLocation);
     
@@ -47,9 +28,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const durationDays = parseInt(document.getElementById('duration-days').value) || 0;
             const durationHours = parseInt(document.getElementById('duration-hours').value) || 0;
 
-            const co2Weight = parseFloat(co2WeightSlider.value);
-            const fairnessWeight = parseFloat(fairnessWeightSlider.value);
-
             // Convert local datetime to ISO format
             const startISO = new Date(startDate).toISOString();
             const endISO = new Date(endDate).toISOString();
@@ -63,9 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 event_duration: {
                     days: durationDays,
                     hours: durationHours
-                },
-                co2_weight: co2Weight,
-                fairness_weight: fairnessWeight
+                }
             };
 
             // Call API
@@ -108,14 +84,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Rationale
         const rationale = document.getElementById('rationale');
-        const co2Weight = parseFloat(co2WeightSlider.value);
-        const fairnessWeight = parseFloat(fairnessWeightSlider.value);
-        
         rationale.innerHTML = `
             <p><strong>Location Selection Rationale:</strong></p>
             <p>${solution.event_location} was selected as the optimal meeting location based on a balanced 
-            consideration of environmental impact and travel fairness. With a CO₂ weight of ${co2Weight} and 
-            fairness weight of ${fairnessWeight}, this location minimizes total carbon emissions 
+            consideration of environmental impact and travel fairness. Using equal weighting between emissions and fairness, this location minimizes total carbon emissions 
             (${solution.total_co2} kg CO₂) while maintaining reasonable travel time disparities across all offices.</p>
             <p>The median travel time of ${solution.median_travel_hours} hours indicates that most attendees 
             have manageable journeys, while the fairness score of ${solution.fairness_score.toFixed(4)} reflects 

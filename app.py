@@ -50,18 +50,9 @@ def optimize():
         # Parse and validate input
         input_data = parse_input_json(data)
         
-        # Get weights (optional, defaults to 0.5 each)
-        co2_weight = float(data.get('co2_weight', 0.5))
-        fairness_weight = float(data.get('fairness_weight', 0.5))
-        
-        # Normalize weights
-        total_weight = co2_weight + fairness_weight
-        if total_weight > 0:
-            co2_weight /= total_weight
-            fairness_weight /= total_weight
-        else:
-            co2_weight = 0.5
-            fairness_weight = 0.5
+        # Use fixed equal weighting between emissions and fairness
+        co2_weight = 0.5
+        fairness_weight = 0.5
         
         # Optimize
         solutions = optimizer.optimize_location(
