@@ -1,7 +1,9 @@
 """
 Main web application for meeting location optimizer.
 """
-from flask import Flask, render_template, request, jsonify
+from pathlib import Path
+
+from flask import Flask, render_template, request, jsonify, url_for
 import json
 from algorithm import MeetingOptimizer, Solution
 from data_handler import load_office_locations, load_travel_data, parse_input_json, create_comparison_output
@@ -82,11 +84,12 @@ def optimize():
                 flow_data = generate_flow_diagram_data(best_solution)
                 
                 # Create map visualization
+                map_file = Path(app.static_folder) / 'map_visualization.html'
                 map_path = create_map_visualization(
-                    solutions, 
-                    office_locations, 
+                    solutions,
+                    office_locations,
                     optimizer.candidate_cities,
-                    output_path='static/map_visualization.html'
+                    output_path=map_file
                 )
             except Exception as e:
                 print(f"Warning: Visualization generation failed: {e}")
@@ -101,7 +104,7 @@ def optimize():
             'visualization': {
                 'chart_data': chart_data,
                 'flow_data': flow_data,
-                'map_path': '/static/map_visualization.html' if map_path else None
+                'map_path': url_for('static', filename='map_visualization.html') if map_path else None
             }
         }
         

@@ -3,6 +3,7 @@ Visualization tools for meeting location optimization results.
 """
 import json
 from typing import Dict, List, Optional
+from pathlib import Path
 
 # Optional import for folium (map visualization)
 try:
@@ -113,8 +114,10 @@ def create_map_visualization(solutions: List[Solution],
     '''
     m.get_root().html.add_child(folium.Element(legend_html))
     
-    m.save(output_path)
-    return output_path
+    output_path = Path(output_path)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    m.save(str(output_path))
+    return str(output_path)
 
 
 def create_comparison_chart_data(solutions: List[Solution]) -> Dict:
