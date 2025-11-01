@@ -2,7 +2,9 @@
 Data handling for JSON input/output and travel data management.
 """
 import json
+from pathlib import Path
 from typing import Dict, List
+
 from algorithm import Location, MeetingOptimizer
 
 
@@ -33,7 +35,12 @@ def load_travel_data(file_path: str = "emissions.csv") -> dict:
     Load travel data from emissions.csv
     """
     try:
-        df = pl.read_csv(file_path)
+        data_dir = Path(__file__).resolve().parent
+        csv_path = Path(file_path)
+        if not csv_path.is_absolute():
+            csv_path = data_dir / csv_path
+
+        df = pl.read_csv(str(csv_path))
         # Compute per passenger CO2
         df = df.with_columns(
             (pl.col("ESTIMATED_CO2_TOTAL_TONNES") / pl.col("SEATS")).alias("CO2_PER_PAX_TONNES")
@@ -64,7 +71,7 @@ def load_travel_data(file_path: str = "emissions.csv") -> dict:
         }
 
     except FileNotFoundError:
-        print(f"Error: {file_path} not found")
+        print(f"Error: {csv_path} not found")
         return {
             "flights": {},
             "co2_emissions": {}
@@ -106,14 +113,24 @@ def parse_input_json(input_data: Dict) -> Dict:
 
 def load_input_from_file(file_path: str) -> Dict:
     """Load and parse input JSON from file."""
-    with open(file_path, 'r') as f:
+    data_dir = Path(__file__).resolve().parent
+    json_path = Path(file_path)
+    if not json_path.is_absolute():
+        json_path = data_dir / json_path
+
+    with open(json_path, 'r') as f:
         data = json.load(f)
     return parse_input_json(data)
 
 
 def save_output_json(output_data: Dict, file_path: str):
     """Save output JSON to file."""
-    with open(file_path, 'w') as f:
+    output_dir = Path(file_path)
+    if not output_dir.is_absolute():
+        output_dir = Path.cwd() / output_dir
+    output_dir.parent.mkdir(parents=True, exist_ok=True)
+
+    with open(output_dir, 'w') as f:
         json.dump(output_data, f, indent=2)
 
 
