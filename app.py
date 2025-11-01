@@ -25,7 +25,7 @@ app = Flask(__name__)
 
 # Initialize optimizer
 office_locations = load_office_locations()
-travel_data = load_travel_data()
+travel_data = load_travel_data("emissions.csv")
 optimizer = MeetingOptimizer(travel_data, office_locations)
 
 
@@ -117,6 +117,19 @@ def optimize():
 def health():
     """Health check endpoint."""
     return jsonify({'status': 'healthy'})
+
+@app.route('/api/debug_csv', methods=['GET'])
+def debug_csv():
+    """Return sample CO2 data from emissions.csv for verification."""
+    # Pick a sample flight from your loaded data
+    sample_origin = "CGK"
+    sample_dest = "SUB"
+
+    flights = travel_data.get("flights", {})
+    if sample_origin in flights and sample_dest in flights[sample_origin]:
+        return jsonify(flights[sample_origin][sample_dest])
+    else:
+        return jsonify({"error": "Sample flight not found"})
 
 
 if __name__ == '__main__':

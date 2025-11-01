@@ -56,7 +56,6 @@ class Solution:
 
 class MeetingOptimizer:
     """Optimizes meeting location balancing CO2 emissions and travel fairness."""
-    
     def __init__(self, travel_data: Dict, office_locations: Dict[str, Location]):
         """
         Initialize optimizer with travel data and office locations.
@@ -133,45 +132,27 @@ class MeetingOptimizer:
         else:
             return distance_km * 0.260 * passengers
     
-    def find_travel_options(self, from_loc: str, to_loc: str, 
-                           availability_start: datetime, 
-                           availability_end: datetime) -> List[TravelOption]:
-        """
-        Find travel options between two locations within availability window.
-        Returns list of TravelOption objects.
-        """
+    def find_travel_options(self, from_loc: str, to_loc: str, availability_start, availability_end):
         options = []
-        
-        if from_loc not in self.office_locations or to_loc not in self.candidate_cities:
-            return options
-        
-        from_location = self.office_locations[from_loc]
-        to_location = self.candidate_cities[to_loc]
-        
-        distance = self.calculate_distance(from_location, to_location)
-        
-        # Generate multiple flight options across the availability window
-        current_time = availability_start
-        while current_time < availability_end - timedelta(hours=24):
-            # Outbound flight
-            flight_time = self.estimate_flight_time(distance)
-            departure = current_time + timedelta(hours=6)  # Morning departure
-            arrival = departure + timedelta(hours=flight_time)
-            
-            if arrival < availability_end:
-                co2 = self.estimate_co2(distance)
-                options.append(TravelOption(
-                    from_location=from_loc,
-                    to_location=to_loc,
-                    departure_time=departure,
-                    arrival_time=arrival,
-                    co2_per_passenger=co2,
-                    mode='flight'
-                ))
-            
-            current_time += timedelta(days=1)
-        
+        from_iata = self.office_locations[from_loc].code
+        to_iata = self.candidate_cities[to_loc].code
+
+        flight_dict = self.travel_data['co2_emissions'].get(from_iata, {}).get(to_iata, {})
+        for date_str, co2 in flight_dict.items():
+            flight_date = datetime.fromisoformat(date_str)
+            if availability_start <= flight_date <= availability_end:
+                options.append(
+                    TravelOption(
+                        from_location=from_loc,
+                        to_location=to_loc,
+                        departure_time=flight_date,
+                        arrival_time=flight_date + timedelta(hours=self.estimate_flight_time(self.calculate_distance(self.office_locations[from_loc], self.candidate_cities[to_loc]))),
+                        co2_per_passenger=co2,
+                        mode='flight'
+                    )
+                )
         return options
+
     
     def calculate_fairness_score(self, travel_hours: Dict[str, float]) -> float:
         """
@@ -228,7 +209,7 @@ class MeetingOptimizer:
         start_str = availability_window['start']
         end_str = availability_window['end']
         
-        if start_str.endswith('Z'):
+        if start_str.endswith('Z'): 
             start_str = start_str[:-1] + '+00:00'
         elif '+' not in start_str and start_str.count(':') >= 2:
             # Assume UTC if no timezone info
@@ -241,6 +222,7 @@ class MeetingOptimizer:
         
         start_time = datetime.fromisoformat(start_str)
         end_time = datetime.fromisoformat(end_str)
+        outbound_date_str = (start_time + timedelta(hours=6)).date().isoformat()
         
         # Convert to naive datetime for calculations (assume UTC)
         if start_time.tzinfo:
@@ -287,7 +269,12 @@ class MeetingOptimizer:
                     
                     distance = self.calculate_distance(office_loc, city_location)
                     flight_hours = self.estimate_flight_time(distance)
-                    co2 = self.estimate_co2(distance, num_attendees)
+                    co2_per_pax = self.travel_data['co2_emissions'].get(self.office_locations[office_name].code, {}).get(city_location.code, {}).get(outbound_date_str, None)
+                    
+                    if co2_per_pax is not None:
+                         co2 = co2_per_pax * num_attendees * 2  # round trip
+                    else:
+                        co2 = self.estimate_co2(distance, num_attendees)  # fallback
                     
                     # Estimate arrival and departure times
                     outbound_departure = start_time + timedelta(hours=6)
