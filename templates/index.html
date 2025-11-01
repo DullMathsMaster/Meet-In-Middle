@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meeting Location Optimizer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-map-marked-alt"></i> Meeting Location Optimizer</h1>
+            <p>Balance carbon emissions and travel fairness for optimal meeting locations</p>
+        </header>
+
+        <div class="main-content">
+            <div class="input-panel">
+                <h2>Input Parameters</h2>
+                
+                <div class="form-group">
+                    <label>Attendees (Office: Count)</label>
+                    <textarea id="attendees-input" rows="6" placeholder='{"Mumbai": 2, "Shanghai": 3, "Hong Kong": 1, "Singapore": 2, "Sydney": 2}'>{"Mumbai": 2, "Shanghai": 3, "Hong Kong": 1, "Singapore": 2, "Sydney": 2}</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Availability Window Start</label>
+                    <input type="datetime-local" id="availability-start" value="2025-12-10T09:00">
+                </div>
+
+                <div class="form-group">
+                    <label>Availability Window End</label>
+                    <input type="datetime-local" id="availability-end" value="2025-12-15T17:00">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Event Duration (Days)</label>
+                        <input type="number" id="duration-days" value="0" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Event Duration (Hours)</label>
+                        <input type="number" id="duration-hours" value="4" min="0">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>CO2 Weight: <span id="co2-weight-value">0.5</span></label>
+                    <input type="range" id="co2-weight" min="0" max="1" step="0.1" value="0.5">
+                </div>
+
+                <div class="form-group">
+                    <label>Fairness Weight: <span id="fairness-weight-value">0.5</span></label>
+                    <input type="range" id="fairness-weight" min="0" max="1" step="0.1" value="0.5">
+                </div>
+
+                <button id="optimize-btn" class="btn-primary">
+                    <i class="fas fa-search"></i> Optimize Location
+                </button>
+
+                <button id="load-sample-btn" class="btn-secondary">
+                    <i class="fas fa-file-alt"></i> Load Sample JSON
+                </button>
+            </div>
+
+            <div class="output-panel">
+                <div id="loading" class="loading" style="display: none;">
+                    <i class="fas fa-spinner fa-spin"></i> Calculating optimal location...
+                </div>
+
+                <div id="results" style="display: none;">
+                    <h2>Optimized Solution</h2>
+                    
+                    <div class="solution-card">
+                        <h3 id="solution-location"></h3>
+                        <div class="metrics-grid">
+                            <div class="metric">
+                                <label>Total CO2</label>
+                                <value id="total-co2"></value>
+                            </div>
+                            <div class="metric">
+                                <label>Avg Travel Hours</label>
+                                <value id="avg-travel"></value>
+                            </div>
+                            <div class="metric">
+                                <label>Median Travel Hours</label>
+                                <value id="median-travel"></value>
+                            </div>
+                            <div class="metric">
+                                <label>Fairness Score</label>
+                                <value id="fairness-score"></value>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h3>Rationale</h3>
+                        <div id="rationale"></div>
+                    </div>
+
+                    <div class="section">
+                        <h3>Travel Breakdown</h3>
+                        <div id="travel-breakdown"></div>
+                    </div>
+
+                    <div class="section">
+                        <h3>Alternative Locations</h3>
+                        <div id="alternatives"></div>
+                    </div>
+
+                    <div class="section">
+                        <h3>Comparison Charts</h3>
+                        <div id="charts"></div>
+                    </div>
+
+                    <div class="section">
+                        <h3>Map Visualization</h3>
+                        <iframe id="map-frame" src="" width="100%" height="600" frameborder="0"></iframe>
+                    </div>
+                </div>
+
+                <div id="error" class="error" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
+

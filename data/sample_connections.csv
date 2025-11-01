@@ -1,0 +1,30 @@
+origin,destination,duration_hours,co2_kg,mode
+Mumbai,Singapore,5.2,640,flight
+Singapore,Mumbai,5.3,640,flight
+Mumbai,Shanghai,6.0,720,flight
+Shanghai,Mumbai,6.1,720,flight
+Mumbai,Dubai,3.2,400,flight
+Dubai,New York,13.8,1180,flight
+Mumbai,New York,15.0,1320,flight
+Shanghai,Singapore,5.0,610,flight
+Singapore,Shanghai,5.0,610,flight
+Shanghai,Hong Kong,2.0,220,flight
+Hong Kong,Shanghai,2.1,220,flight
+Hong Kong,Singapore,4.0,500,flight
+Singapore,Hong Kong,4.0,500,flight
+Singapore,Sydney,7.5,880,flight
+Sydney,Singapore,7.5,880,flight
+Hong Kong,Sydney,9.0,1100,flight
+Sydney,Hong Kong,9.0,1100,flight
+Shanghai,Tokyo,3.0,350,flight
+Tokyo,San Francisco,9.0,900,flight
+San Francisco,New York,5.5,550,flight
+Singapore,Tokyo,6.5,700,flight
+Tokyo,Singapore,6.5,700,flight
+Mumbai,Doha,3.5,380,flight
+Doha,London,7.5,750,flight
+London,New York,7.5,750,flight
+Singapore,Los Angeles,15.0,1500,flight
+Los Angeles,New York,5.5,550,flight
+Sydney,Los Angeles,13.5,1350,flight
+Los Angeles,Sydney,13.5,1350,flight

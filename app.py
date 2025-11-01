@@ -1,0 +1,133 @@
+"""
+Main web application for meeting location optimizer.
+"""
+from flask import Flask, render_template, request, jsonify
+import json
+from algorithm import MeetingOptimizer, Solution
+from data_handler import load_office_locations, load_travel_data, parse_input_json, create_comparison_output
+
+# Optional visualization imports
+try:
+    from visualization import create_map_visualization, create_comparison_chart_data, generate_flow_diagram_data
+    VISUALIZATION_AVAILABLE = True
+except ImportError as e:
+    print(f"Warning: Visualization module not available: {e}")
+    VISUALIZATION_AVAILABLE = False
+    # Create stub functions
+    def create_map_visualization(*args, **kwargs):
+        return None
+    def create_comparison_chart_data(*args, **kwargs):
+        return {}
+    def generate_flow_diagram_data(*args, **kwargs):
+        return {}
+
+app = Flask(__name__)
+
+# Initialize optimizer
+office_locations = load_office_locations()
+travel_data = load_travel_data()
+optimizer = MeetingOptimizer(travel_data, office_locations)
+
+
+@app.route('/')
+def index():
+    """Main page with interactive interface."""
+    return render_template('index.html')
+
+
+@app.route('/api/optimize', methods=['POST'])
+def optimize():
+    """
+    API endpoint for optimizing meeting location.
+    Accepts JSON input and returns optimized solution.
+    """
+    try:
+        data = request.get_json()
+        
+        if not data:
+            return jsonify({'error': 'No JSON data provided'}), 400
+        
+        # Parse and validate input
+        input_data = parse_input_json(data)
+        
+        # Get weights (optional, defaults to 0.5 each)
+        co2_weight = float(data.get('co2_weight', 0.5))
+        fairness_weight = float(data.get('fairness_weight', 0.5))
+        
+        # Normalize weights
+        total_weight = co2_weight + fairness_weight
+        if total_weight > 0:
+            co2_weight /= total_weight
+            fairness_weight /= total_weight
+        else:
+            co2_weight = 0.5
+            fairness_weight = 0.5
+        
+        # Optimize
+        solutions = optimizer.optimize_location(
+            attendees=input_data['attendees'],
+            availability_window=input_data['availability_window'],
+            event_duration=input_data['event_duration'],
+            co2_weight=co2_weight,
+            fairness_weight=fairness_weight,
+            top_n=10
+        )
+        
+        if not solutions:
+            return jsonify({'error': 'No solutions found'}), 404
+        
+        # Convert solutions to dictionaries
+        solution_dicts = [optimizer.solution_to_dict(sol) for sol in solutions]
+        
+        # Get visualization data
+        best_solution = solutions[0]
+        chart_data = {}
+        flow_data = {}
+        map_path = None
+        
+        if VISUALIZATION_AVAILABLE:
+            try:
+                chart_data = create_comparison_chart_data(solutions)
+                flow_data = generate_flow_diagram_data(best_solution)
+                
+                # Create map visualization
+                map_path = create_map_visualization(
+                    solutions, 
+                    office_locations, 
+                    optimizer.candidate_cities,
+                    output_path='static/map_visualization.html'
+                )
+            except Exception as e:
+                print(f"Warning: Visualization generation failed: {e}")
+        
+        # Create comparison output
+        comparison = create_comparison_output(solution_dicts)
+        
+        response = {
+            'solution': solution_dicts[0],
+            'alternatives': solution_dicts[1:],
+            'comparison': comparison,
+            'visualization': {
+                'chart_data': chart_data,
+                'flow_data': flow_data,
+                'map_path': '/static/map_visualization.html' if map_path else None
+            }
+        }
+        
+        return jsonify(response)
+    
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 400
+    except Exception as e:
+        return jsonify({'error': f'Internal error: {str(e)}'}), 500
+
+
+@app.route('/api/health', methods=['GET'])
+def health():
+    """Health check endpoint."""
+    return jsonify({'status': 'healthy'})
+
+
+if __name__ == '__main__':
+    app.run(debug=True, port=5000)
+
