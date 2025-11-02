@@ -1,5 +1,5 @@
 """
-Core algorithm for optimizing meeting location based on CO2 emissions and fairness.
+Core algorithm for optimizing meeting location based on CO2 emissions.
 """
 import json
 import math
@@ -50,12 +50,11 @@ class Solution:
     max_travel_hours: float
     min_travel_hours: float
     attendee_travel_hours: Dict[str, float]
-    fairness_score: float
     attendee_details: Dict[str, AttendeeTravel]
 
 
 class MeetingOptimizer:
-    """Optimizes meeting location balancing CO2 emissions and travel fairness."""
+    """Optimizes meeting location with a focus on minimising CO2 emissions."""
     def __init__(self, travel_data: Dict, office_locations: Dict[str, Location]):
         """
         Initialize optimizer with travel data and office locations.
@@ -352,56 +351,21 @@ class MeetingOptimizer:
         return options
 
     
-    def calculate_fairness_score(self, travel_hours: Dict[str, float]) -> float:
-        """
-        Calculate fairness score (lower is better).
-        Uses coefficient of variation (CV) as fairness metric.
-        """
-        if not travel_hours:
-            return float('inf')
-        
-        hours_list = list(travel_hours.values())
-        if all(h == 0 for h in hours_list):
-            return 0.0
-        
-        mean_hours = sum(hours_list) / len(hours_list)
-        if mean_hours == 0:
-            return 0.0
-        
-        variance = sum((h - mean_hours) ** 2 for h in hours_list) / len(hours_list)
-        std_dev = math.sqrt(variance)
-        coefficient_of_variation = std_dev / mean_hours if mean_hours > 0 else 0
-        
-        # Also consider max/min ratio
-        non_zero_hours = [h for h in hours_list if h > 0]
-        if len(non_zero_hours) > 1:
-            max_min_ratio = max(non_zero_hours) / min(non_zero_hours)
-        else:
-            max_min_ratio = 1.0
-        
-        # Combined fairness score (weighted combination)
-        fairness = 0.7 * coefficient_of_variation + 0.3 * (max_min_ratio - 1.0)
-        return fairness
-    
     def optimize_location(self, attendees: Dict[str, int],
                          availability_window: Dict[str, str],
                          event_duration: Dict[str, int],
-                         co2_weight: float = 0.5,
-                         fairness_weight: float = 0.5,
                          top_n: int = 5) -> List[Solution]:
         """
-        Find optimal meeting locations balancing CO2 and fairness.
-        
+        Find meeting locations that minimise total CO2 emissions.
+
         Args:
             attendees: Dict mapping office names to number of attendees
             availability_window: Dict with 'start' and 'end' ISO datetime strings
             event_duration: Dict with 'days' and 'hours'
-            co2_weight: Weight for CO2 emissions (0-1)
-            fairness_weight: Weight for fairness (0-1), should sum to 1 with co2_weight
             top_n: Number of top solutions to return
-            
+
         Returns:
-            List of Solution objects sorted by combined score
+            List of Solution objects sorted by CO2 emissions
         """
         # Parse datetime strings, handling Z (UTC) suffix
         start_str = availability_window['start']
@@ -427,10 +391,9 @@ class MeetingOptimizer:
             start_time = start_time.replace(tzinfo=None)
         if end_time.tzinfo:
             end_time = end_time.replace(tzinfo=None)
-        
-            event_hours = event_duration.get('days', 0) * 24 + event_duration.get('hours', 0)
 
-            solutions = []
+        event_hours = event_duration.get('days', 0) * 24 + event_duration.get('hours', 0)
+        solutions = []
         
         # Evaluate each candidate city
         for city_name, city_location in self.candidate_cities.items():
@@ -548,8 +511,6 @@ class MeetingOptimizer:
             event_span_start = min(all_arrival_times) if all_arrival_times else start_time
             event_span_end = max(all_departure_times) if all_departure_times else end_time
             
-            fairness_score = self.calculate_fairness_score(travel_hours_dict)
-
             # Create Solution object (scoring is applied after evaluating all cities)
             solution = Solution(
                 location=city_name,
@@ -567,38 +528,28 @@ class MeetingOptimizer:
                 max_travel_hours=max_hours,
                 min_travel_hours=min_hours,
                 attendee_travel_hours=travel_hours_dict,
-                fairness_score=fairness_score,
                 attendee_details=attendee_travels
             )
             
             # Append raw solution with its raw metrics; we'll normalize/sort later
-            solutions.append((solution, total_co2, fairness_score))
+            solutions.append((solution, total_co2))
         
         # If no solutions found, return empty
         if not solutions:
             return []
 
-        # Compute min-max across total_co2 and fairness to normalize
+        # Compute min-max across total_co2 to normalize scores
         co2_values = [t[1] for t in solutions]
-        fairness_values = [t[2] for t in solutions]
         min_co2, max_co2 = min(co2_values), max(co2_values)
-        min_fair, max_fair = min(fairness_values), max(fairness_values)
 
         scored = []
-        for sol_obj, sol_co2, sol_fair in solutions:
+        for sol_obj, sol_co2 in solutions:
             if max_co2 > min_co2:
                 norm_co2 = (sol_co2 - min_co2) / (max_co2 - min_co2)
             else:
                 norm_co2 = 0.0
 
-            # For fairness higher = worse; normalize so higher -> larger normalized value
-            if max_fair > min_fair:
-                norm_fair = (sol_fair - min_fair) / (max_fair - min_fair)
-            else:
-                norm_fair = 0.0
-
-            combined_score = co2_weight * norm_co2 + fairness_weight * norm_fair
-            scored.append((combined_score, sol_obj))
+            scored.append((norm_co2, sol_obj))
 
         # Sort by combined score (lower is better) and return top N Solution objects
         scored.sort(key=lambda x: x[0])
@@ -615,7 +566,6 @@ class MeetingOptimizer:
             "median_travel_hours": round(solution.median_travel_hours, 2),
             "max_travel_hours": round(solution.max_travel_hours, 2),
             "min_travel_hours": round(solution.min_travel_hours, 2),
-            "attendee_travel_hours": {k: round(v, 2) for k, v in solution.attendee_travel_hours.items()},
-            "fairness_score": round(solution.fairness_score, 4)
+            "attendee_travel_hours": {k: round(v, 2) for k, v in solution.attendee_travel_hours.items()}
         }
 

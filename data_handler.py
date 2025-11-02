@@ -445,11 +445,6 @@ def create_comparison_output(solutions: List[Dict]) -> Dict:
                 "min_avg": min(s['average_travel_hours'] for s in solutions),
                 "max_avg": max(s['average_travel_hours'] for s in solutions),
                 "avg_avg": sum(s['average_travel_hours'] for s in solutions) / len(solutions)
-            },
-            "fairness_range": {
-                "min": min(s.get('fairness_score', 0) for s in solutions),
-                "max": max(s.get('fairness_score', 0) for s in solutions),
-                "avg": sum(s.get('fairness_score', 0) for s in solutions) / len(solutions)
             }
         }
     }

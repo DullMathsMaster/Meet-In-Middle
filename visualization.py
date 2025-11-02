@@ -55,8 +55,7 @@ def create_map_visualization(solutions: List[Solution],
     meeting_popup = (
         f"<b>Meeting Location: {meeting_location.name}</b><br>"
         f"Total CO2: {best_solution.total_co2:.2f} kg<br>"
-        f"Avg Travel: {best_solution.average_travel_hours:.2f} hours<br>"
-        f"Fairness Score: {best_solution.fairness_score:.4f}"
+        f"Avg Travel: {best_solution.average_travel_hours:.2f} hours"
     )
     if same_office_info:
         meeting_popup += "<hr>" + "".join(same_office_info)
@@ -157,15 +156,13 @@ def create_comparison_chart_data(solutions: List[Solution]) -> Dict:
     cities = [s.location for s in solutions]
     co2_values = [s.total_co2 for s in solutions]
     avg_travel = [s.average_travel_hours for s in solutions]
-    fairness_scores = [s.fairness_score for s in solutions]
     max_travel = [s.max_travel_hours for s in solutions]
     
     return {
         "cities": cities,
         "co2_emissions": co2_values,
         "average_travel_hours": avg_travel,
-        "max_travel_hours": max_travel,
-        "fairness_scores": fairness_scores
+        "max_travel_hours": max_travel
     }
 
 
@@ -189,8 +186,7 @@ def generate_flow_diagram_data(solution: Solution) -> Dict:
         "flows": flows,
         "summary": {
             "total_co2": solution.total_co2,
-            "average_travel_hours": solution.average_travel_hours,
-            "fairness_score": solution.fairness_score
+            "average_travel_hours": solution.average_travel_hours
         }
     }
 

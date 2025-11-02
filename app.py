@@ -54,10 +54,6 @@ def optimize():
         # Parse and validate input
         input_data = parse_input_json(data)
         
-        # Use fixed equal weighting between emissions and fairness
-        co2_weight = 0.5
-        fairness_weight = 0.5
-
         # Build an office_locations mapping for this request and enrich it using
         # worldcities.csv for any attendee city names not in the defaults.
         local_offices = load_office_locations()
@@ -77,8 +73,6 @@ def optimize():
             attendees=input_data['attendees'],
             availability_window=input_data['availability_window'],
             event_duration=input_data['event_duration'],
-            co2_weight=co2_weight,
-            fairness_weight=fairness_weight,
             top_n=10
         )
         
