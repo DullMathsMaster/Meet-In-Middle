@@ -273,8 +273,7 @@ class MeetingOptimizer:
         Uses average: ~115g CO2 per passenger per km for short-haul,
         ~180g for medium, ~260g for long-haul.
         """
-
-
+        
         if distance_km < 1500:
             return distance_km * 0.115 * passengers
         elif distance_km < 4000:

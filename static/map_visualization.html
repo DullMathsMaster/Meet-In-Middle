@@ -39,15 +39,28 @@
 <body>
     
     
-    <div style="position: fixed; 
-                bottom: 50px; left: 50px; width: 200px; height: 120px; 
-                background-color: white; z-index:9999; font-size:14px;
-                border:2px solid grey; border-radius: 5px; padding: 10px">
-    <h4>Legend</h4>
-    <p><i class="fa fa-star" style="color:green"></i> Meeting Location</p>
-    <p><i class="fa fa-building" style="color:blue"></i> Office</p>
-    <p><span style="color:orange">●</span> Alternative Locations</p>
-    <p style="color:red">━━━</span> Travel Path</p>
+    <div style="position: fixed;
+                bottom: 40px; left: 40px; max-width: 260px;
+                background-color: white; z-index:9999; font-size:13px;
+                border: 2px solid grey; border-radius: 6px; padding: 12px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.15); line-height: 1.4;">
+        <h4 style="margin: 0 0 8px 0; font-size: 16px;">Legend</h4>
+        <div style="display: flex; align-items: center; margin-bottom: 6px;">
+            <i class="fa fa-star" style="color:green; margin-right: 8px;"></i>
+            <span>Meeting Location</span>
+        </div>
+        <div style="display: flex; align-items: center; margin-bottom: 6px;">
+            <i class="fa fa-building" style="color:blue; margin-right: 8px;"></i>
+            <span>Office</span>
+        </div>
+        <div style="display: flex; align-items: center; margin-bottom: 6px;">
+            <span style="color:orange; font-size: 20px; margin-right: 8px;">●</span>
+            <span>Alternative Locations</span>
+        </div>
+        <div style="display: flex; align-items: center;">
+            <span style="color:red; font-weight: bold; margin-right: 8px;">━━━</span>
+            <span>Travel Path</span>
+        </div>
     </div>
     
     
