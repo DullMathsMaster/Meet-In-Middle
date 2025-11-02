@@ -6,7 +6,7 @@ from pathlib import Path
 from flask import Flask, render_template, request, jsonify, url_for
 import json
 from algorithm import MeetingOptimizer, Solution
-from data_handler import load_office_locations, load_travel_data, parse_input_json, create_comparison_output
+from data_handler import load_office_locations, load_travel_data, parse_input_json, create_comparison_output, find_city_location
 
 # Optional visualization imports
 try:
@@ -28,7 +28,9 @@ app = Flask(__name__)
 # Initialize optimizer
 office_locations = load_office_locations()
 travel_data = load_travel_data("datasets/emissions.csv")
-optimizer = MeetingOptimizer(travel_data, office_locations)
+# Note: we create a request-scoped MeetingOptimizer in the handler so we can
+# enrich office locations dynamically from worldcities.csv when the JSON
+# input contains offices not present in the fixed office list.
 
 
 @app.route('/')
@@ -55,7 +57,21 @@ def optimize():
         # Use fixed equal weighting between emissions and fairness
         co2_weight = 0.5
         fairness_weight = 0.5
-        
+
+        # Build an office_locations mapping for this request and enrich it using
+        # worldcities.csv for any attendee city names not in the defaults.
+        local_offices = load_office_locations()
+        for office_name in input_data['attendees'].keys():
+            if office_name not in local_offices:
+                try:
+                    loc = find_city_location(office_name)
+                    local_offices[office_name] = loc
+                except Exception as e:
+                    return jsonify({'error': f"Unknown office '{office_name}' and not found in worldcities: {str(e)}"}), 400
+
+        # Create a request-scoped optimizer with the enriched office list
+        optimizer = MeetingOptimizer(travel_data, local_offices)
+
         # Optimize
         solutions = optimizer.optimize_location(
             attendees=input_data['attendees'],
@@ -87,7 +103,7 @@ def optimize():
                 map_file = Path(app.static_folder) / 'map_visualization.html'
                 map_path = create_map_visualization(
                     solutions,
-                    office_locations,
+                    local_offices,
                     optimizer.candidate_cities,
                     output_path=map_file
                 )
