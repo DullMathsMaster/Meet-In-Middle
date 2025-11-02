@@ -25,7 +25,7 @@
             <meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
             <style>
-                #map_96715c1c87db534b930a6bfd93248d39 {
+                #map_c47d1f60cac10ee636e79c7f78b78e91 {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -39,26 +39,39 @@
 <body>
     
     
-    <div style="position: fixed; 
-                bottom: 50px; left: 50px; width: 200px; height: 120px; 
-                background-color: white; z-index:9999; font-size:14px;
-                border:2px solid grey; border-radius: 5px; padding: 10px">
-    <h4>Legend</h4>
-    <p><i class="fa fa-star" style="color:green"></i> Meeting Location</p>
-    <p><i class="fa fa-building" style="color:blue"></i> Office</p>
-    <p><span style="color:orange">●</span> Alternative Locations</p>
-    <p style="color:red">━━━</span> Travel Path</p>
+    <div style="position: fixed;
+                bottom: 40px; left: 40px; max-width: 260px;
+                background-color: white; z-index:9999; font-size:13px;
+                border: 2px solid grey; border-radius: 6px; padding: 12px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.15); line-height: 1.4;">
+        <h4 style="margin: 0 0 8px 0; font-size: 16px;">Legend</h4>
+        <div style="display: flex; align-items: center; margin-bottom: 6px;">
+            <i class="fa fa-star" style="color:green; margin-right: 8px;"></i>
+            <span>Meeting Location</span>
+        </div>
+        <div style="display: flex; align-items: center; margin-bottom: 6px;">
+            <i class="fa fa-building" style="color:blue; margin-right: 8px;"></i>
+            <span>Office</span>
+        </div>
+        <div style="display: flex; align-items: center; margin-bottom: 6px;">
+            <span style="color:orange; font-size: 20px; margin-right: 8px;">●</span>
+            <span>Alternative Locations</span>
+        </div>
+        <div style="display: flex; align-items: center;">
+            <span style="color:red; font-weight: bold; margin-right: 8px;">━━━</span>
+            <span>Travel Path</span>
+        </div>
     </div>
     
     
-            <div class="folium-map" id="map_96715c1c87db534b930a6bfd93248d39" ></div>
+            <div class="folium-map" id="map_c47d1f60cac10ee636e79c7f78b78e91" ></div>
         
 </body>
 <script>
     
     
-            var map_96715c1c87db534b930a6bfd93248d39 = L.map(
-                "map_96715c1c87db534b930a6bfd93248d39",
+            var map_c47d1f60cac10ee636e79c7f78b78e91 = L.map(
+                "map_c47d1f60cac10ee636e79c7f78b78e91",
                 {
                     center: [1.3521, 103.8198],
                     crs: L.CRS.EPSG3857,
@@ -72,42 +85,42 @@
 
         
     
-            var tile_layer_a843aba73491685eb1e0d9e5334103df = L.tileLayer(
+            var tile_layer_c4e2481520811ec2a432d0797b8bcbb6 = L.tileLayer(
                 "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
                 {"attribution": "Data by \u0026copy; \u003ca target=\"_blank\" href=\"http://openstreetmap.org\"\u003eOpenStreetMap\u003c/a\u003e, under \u003ca target=\"_blank\" href=\"http://www.openstreetmap.org/copyright\"\u003eODbL\u003c/a\u003e.", "detectRetina": false, "maxNativeZoom": 18, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
             );
         
     
-                tile_layer_a843aba73491685eb1e0d9e5334103df.addTo(map_96715c1c87db534b930a6bfd93248d39);
+                tile_layer_c4e2481520811ec2a432d0797b8bcbb6.addTo(map_c47d1f60cac10ee636e79c7f78b78e91);
     
-            var marker_e1f21b7e882de3f657337496e84e08b1 = L.marker(
+            var marker_d90bb85be6928161c43ff996b10f6e7a = L.marker(
                 [1.3521, 103.8198],
                 {}
-            ).addTo(map_96715c1c87db534b930a6bfd93248d39);
+            ).addTo(map_c47d1f60cac10ee636e79c7f78b78e91);
         
     
-            var icon_1d739bd5c55aa9f0cd780a76d2592b3d = L.AwesomeMarkers.icon(
+            var icon_8a4fc29a0c06e47e5ee8f6c28ebdd714 = L.AwesomeMarkers.icon(
                 {"extraClasses": "fa-rotate-0", "icon": "star", "iconColor": "white", "markerColor": "red", "prefix": "fa"}
             );
-            marker_e1f21b7e882de3f657337496e84e08b1.setIcon(icon_1d739bd5c55aa9f0cd780a76d2592b3d);
+            marker_d90bb85be6928161c43ff996b10f6e7a.setIcon(icon_8a4fc29a0c06e47e5ee8f6c28ebdd714);
         
     
-        var popup_56a293923d1497a5496c46bc85559264 = L.popup({"maxWidth": "100%"});
+        var popup_facb8fe8c6be973f630028d5be309059 = L.popup({"maxWidth": "100%"});
 
         
             
-                var html_14bbd1534c05f6e8159224bd1e242559 = $(`<div id="html_14bbd1534c05f6e8159224bd1e242559" style="width: 100.0%; height: 100.0%;"><b>Meeting Location: Singapore</b><br>Total CO2: 7205.21 kg<br>Avg Travel: 7.65 hours<br>Fairness Score: 0.8114<hr><br><b>Office: Singapore</b><br>Travel Hours: 0.00<br>CO2: 0.00 kg</div>`)[0];
-                popup_56a293923d1497a5496c46bc85559264.setContent(html_14bbd1534c05f6e8159224bd1e242559);
+                var html_7c3f24dbf41100beb77ac41d3fc59226 = $(`<div id="html_7c3f24dbf41100beb77ac41d3fc59226" style="width: 100.0%; height: 100.0%;"><b>Meeting Location: Singapore</b><br>Total CO2: 7205.21 kg<br>Avg Travel: 7.65 hours<br>Fairness Score: 0.8114<hr><br><b>Office: Singapore</b><br>Travel Hours: 0.00<br>CO2: 0.00 kg</div>`)[0];
+                popup_facb8fe8c6be973f630028d5be309059.setContent(html_7c3f24dbf41100beb77ac41d3fc59226);
             
         
 
-        marker_e1f21b7e882de3f657337496e84e08b1.bindPopup(popup_56a293923d1497a5496c46bc85559264)
+        marker_d90bb85be6928161c43ff996b10f6e7a.bindPopup(popup_facb8fe8c6be973f630028d5be309059)
         ;
 
         
     
     
-            marker_e1f21b7e882de3f657337496e84e08b1.bindTooltip(
+            marker_d90bb85be6928161c43ff996b10f6e7a.bindTooltip(
                 `<div>
                      Singapore
                  </div>`,
@@ -115,34 +128,34 @@
             );
         
     
-            var marker_0f13dc7440e69a3c4bc257be20846dd8 = L.marker(
+            var marker_4e8445f73e049b0c46b3114529d6fb13 = L.marker(
                 [19.076, 72.8777],
                 {}
-            ).addTo(map_96715c1c87db534b930a6bfd93248d39);
+            ).addTo(map_c47d1f60cac10ee636e79c7f78b78e91);
         
     
-            var icon_7e75de99c9fc27a26757894d546b5d30 = L.AwesomeMarkers.icon(
+            var icon_e41b412b740ba9e8008ed83dd38b4d83 = L.AwesomeMarkers.icon(
                 {"extraClasses": "fa-rotate-0", "icon": "building", "iconColor": "white", "markerColor": "blue", "prefix": "fa"}
             );
-            marker_0f13dc7440e69a3c4bc257be20846dd8.setIcon(icon_7e75de99c9fc27a26757894d546b5d30);
+            marker_4e8445f73e049b0c46b3114529d6fb13.setIcon(icon_e41b412b740ba9e8008ed83dd38b4d83);
         
     
-        var popup_c4029119411c276734e7df26184765d7 = L.popup({"maxWidth": "100%"});
+        var popup_5e7f38469fa198116f8fd452a5b55133 = L.popup({"maxWidth": "100%"});
 
         
             
-                var html_a3b93095fc054c7abf3876324b8d9fe0 = $(`<div id="html_a3b93095fc054c7abf3876324b8d9fe0" style="width: 100.0%; height: 100.0%;"><b>Mumbai</b><br>Travel Hours: 9.19<br>CO2: 1405.36 kg</div>`)[0];
-                popup_c4029119411c276734e7df26184765d7.setContent(html_a3b93095fc054c7abf3876324b8d9fe0);
+                var html_72ada85d6e76042b6cb276baa2d3f8a5 = $(`<div id="html_72ada85d6e76042b6cb276baa2d3f8a5" style="width: 100.0%; height: 100.0%;"><b>Mumbai</b><br>Travel Hours: 9.19<br>CO2: 1405.36 kg</div>`)[0];
+                popup_5e7f38469fa198116f8fd452a5b55133.setContent(html_72ada85d6e76042b6cb276baa2d3f8a5);
             
         
 
-        marker_0f13dc7440e69a3c4bc257be20846dd8.bindPopup(popup_c4029119411c276734e7df26184765d7)
+        marker_4e8445f73e049b0c46b3114529d6fb13.bindPopup(popup_5e7f38469fa198116f8fd452a5b55133)
         ;
 
         
     
     
-            marker_0f13dc7440e69a3c4bc257be20846dd8.bindTooltip(
+            marker_4e8445f73e049b0c46b3114529d6fb13.bindTooltip(
                 `<div>
                      Mumbai
                  </div>`,
@@ -150,28 +163,28 @@
             );
         
     
-            var poly_line_7bac67faa738a0365a871ac40e4aac55 = L.polyline(
+            var poly_line_e4000de5bca17858b7ce66fca014a301 = L.polyline(
                 [[19.076, 72.8777], [1.3521, 103.8198]],
                 {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "red", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.7, "smoothFactor": 1.0, "stroke": true, "weight": 3}
-            ).addTo(map_96715c1c87db534b930a6bfd93248d39);
+            ).addTo(map_c47d1f60cac10ee636e79c7f78b78e91);
         
     
-        var popup_4c4f48d4841587c5c493ab8950ec010b = L.popup({"maxWidth": "100%"});
+        var popup_5e59b62801e7fbc1ac7bfbf6c3fb63ed = L.popup({"maxWidth": "100%"});
 
         
             
-                var html_5d0509e0608a84437a815211b2372e0a = $(`<div id="html_5d0509e0608a84437a815211b2372e0a" style="width: 100.0%; height: 100.0%;">Mumbai → Singapore</div>`)[0];
-                popup_4c4f48d4841587c5c493ab8950ec010b.setContent(html_5d0509e0608a84437a815211b2372e0a);
+                var html_6182e168275659bfd49fb90414d82c5c = $(`<div id="html_6182e168275659bfd49fb90414d82c5c" style="width: 100.0%; height: 100.0%;">Mumbai → Singapore</div>`)[0];
+                popup_5e59b62801e7fbc1ac7bfbf6c3fb63ed.setContent(html_6182e168275659bfd49fb90414d82c5c);
             
         
 
-        poly_line_7bac67faa738a0365a871ac40e4aac55.bindPopup(popup_4c4f48d4841587c5c493ab8950ec010b)
+        poly_line_e4000de5bca17858b7ce66fca014a301.bindPopup(popup_5e59b62801e7fbc1ac7bfbf6c3fb63ed)
         ;
 
         
     
     
-            poly_line_7bac67faa738a0365a871ac40e4aac55.bindTooltip(
+            poly_line_e4000de5bca17858b7ce66fca014a301.bindTooltip(
                 `<div>
                      9.19 hours, 1405.36 kg CO2
                  </div>`,
@@ -179,34 +192,34 @@
             );
         
     
-            var marker_c68f0890d28848ce662ad7e0cd1d4915 = L.marker(
+            var marker_ba10f62ad3fd21a12e475d3c7bd017cd = L.marker(
                 [31.2304, 121.4737],
                 {}
-            ).addTo(map_96715c1c87db534b930a6bfd93248d39);
+            ).addTo(map_c47d1f60cac10ee636e79c7f78b78e91);
         
     
-            var icon_d963b3431f5713aeb96e92b3abf7c399 = L.AwesomeMarkers.icon(
+            var icon_58d82223410591f331f76634c05feb61 = L.AwesomeMarkers.icon(
                 {"extraClasses": "fa-rotate-0", "icon": "building", "iconColor": "white", "markerColor": "blue", "prefix": "fa"}
             );
-            marker_c68f0890d28848ce662ad7e0cd1d4915.setIcon(icon_d963b3431f5713aeb96e92b3abf7c399);
+            marker_ba10f62ad3fd21a12e475d3c7bd017cd.setIcon(icon_58d82223410591f331f76634c05feb61);
         
     
-        var popup_42b781c006b7ff94fc67e27a9d5fa628 = L.popup({"maxWidth": "100%"});
+        var popup_9abacb8f3d443846daabd213e1fbde00 = L.popup({"maxWidth": "100%"});
 
         
             
-                var html_715d7eeed0c8ab7205d40b0e34ed0258 = $(`<div id="html_715d7eeed0c8ab7205d40b0e34ed0258" style="width: 100.0%; height: 100.0%;"><b>Shanghai</b><br>Travel Hours: 8.95<br>CO2: 2055.10 kg</div>`)[0];
-                popup_42b781c006b7ff94fc67e27a9d5fa628.setContent(html_715d7eeed0c8ab7205d40b0e34ed0258);
+                var html_afd723d9cfe581a4c30a9e655b9db87e = $(`<div id="html_afd723d9cfe581a4c30a9e655b9db87e" style="width: 100.0%; height: 100.0%;"><b>Shanghai</b><br>Travel Hours: 8.95<br>CO2: 2055.10 kg</div>`)[0];
+                popup_9abacb8f3d443846daabd213e1fbde00.setContent(html_afd723d9cfe581a4c30a9e655b9db87e);
             
         
 
-        marker_c68f0890d28848ce662ad7e0cd1d4915.bindPopup(popup_42b781c006b7ff94fc67e27a9d5fa628)
+        marker_ba10f62ad3fd21a12e475d3c7bd017cd.bindPopup(popup_9abacb8f3d443846daabd213e1fbde00)
         ;
 
         
     
     
-            marker_c68f0890d28848ce662ad7e0cd1d4915.bindTooltip(
+            marker_ba10f62ad3fd21a12e475d3c7bd017cd.bindTooltip(
                 `<div>
                      Shanghai
                  </div>`,
@@ -214,28 +227,28 @@
             );
         
     
-            var poly_line_86bc91fac981fcb8f124a0cd72c5d1ad = L.polyline(
+            var poly_line_7e89f00cde5bd4ef0f663da246242f41 = L.polyline(
                 [[31.2304, 121.4737], [1.3521, 103.8198]],
                 {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "red", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.7, "smoothFactor": 1.0, "stroke": true, "weight": 3}
-            ).addTo(map_96715c1c87db534b930a6bfd93248d39);
+            ).addTo(map_c47d1f60cac10ee636e79c7f78b78e91);
         
     
-        var popup_58a59dc104bf0fe37b1f0b909c4b541d = L.popup({"maxWidth": "100%"});
+        var popup_33b39b338766f393f296b278ab2c4952 = L.popup({"maxWidth": "100%"});
 
         
             
-                var html_d749b2a766a42705a11964146f851f1d = $(`<div id="html_d749b2a766a42705a11964146f851f1d" style="width: 100.0%; height: 100.0%;">Shanghai → Singapore</div>`)[0];
-                popup_58a59dc104bf0fe37b1f0b909c4b541d.setContent(html_d749b2a766a42705a11964146f851f1d);
+                var html_28180feddb3e5cf60f081939171fcdc0 = $(`<div id="html_28180feddb3e5cf60f081939171fcdc0" style="width: 100.0%; height: 100.0%;">Shanghai → Singapore</div>`)[0];
+                popup_33b39b338766f393f296b278ab2c4952.setContent(html_28180feddb3e5cf60f081939171fcdc0);
             
         
 
-        poly_line_86bc91fac981fcb8f124a0cd72c5d1ad.bindPopup(popup_58a59dc104bf0fe37b1f0b909c4b541d)
+        poly_line_7e89f00cde5bd4ef0f663da246242f41.bindPopup(popup_33b39b338766f393f296b278ab2c4952)
         ;
 
         
     
     
-            poly_line_86bc91fac981fcb8f124a0cd72c5d1ad.bindTooltip(
+            poly_line_7e89f00cde5bd4ef0f663da246242f41.bindTooltip(
                 `<div>
                      8.95 hours, 2055.10 kg CO2
                  </div>`,
@@ -243,34 +256,34 @@
             );
         
     
-            var marker_f350365cf82e33445c62979c4756df83 = L.marker(
+            var marker_4994db1fde670e75f83e1e5951808ceb = L.marker(
                 [22.3193, 114.1694],
                 {}
-            ).addTo(map_96715c1c87db534b930a6bfd93248d39);
+            ).addTo(map_c47d1f60cac10ee636e79c7f78b78e91);
         
     
-            var icon_4092e3597f584f2ffeed2c15276df426 = L.AwesomeMarkers.icon(
+            var icon_a5eb7b9ffbe73f6e23b2546cd21a5fe6 = L.AwesomeMarkers.icon(
                 {"extraClasses": "fa-rotate-0", "icon": "building", "iconColor": "white", "markerColor": "blue", "prefix": "fa"}
             );
-            marker_f350365cf82e33445c62979c4756df83.setIcon(icon_4092e3597f584f2ffeed2c15276df426);
+            marker_4994db1fde670e75f83e1e5951808ceb.setIcon(icon_a5eb7b9ffbe73f6e23b2546cd21a5fe6);
         
     
-        var popup_a9d2973d416c2a8c46fe00024c17574f = L.popup({"maxWidth": "100%"});
+        var popup_51820d6e37a241f768d87dea4bb6daac = L.popup({"maxWidth": "100%"});
 
         
             
-                var html_ec4de29ac80742c58c7304e51dca4daa = $(`<div id="html_ec4de29ac80742c58c7304e51dca4daa" style="width: 100.0%; height: 100.0%;"><b>Hong Kong</b><br>Travel Hours: 6.09<br>CO2: 465.50 kg</div>`)[0];
-                popup_a9d2973d416c2a8c46fe00024c17574f.setContent(html_ec4de29ac80742c58c7304e51dca4daa);
+                var html_ccba99050154e08ad9d9045a5a4d1074 = $(`<div id="html_ccba99050154e08ad9d9045a5a4d1074" style="width: 100.0%; height: 100.0%;"><b>Hong Kong</b><br>Travel Hours: 6.09<br>CO2: 465.50 kg</div>`)[0];
+                popup_51820d6e37a241f768d87dea4bb6daac.setContent(html_ccba99050154e08ad9d9045a5a4d1074);
             
         
 
-        marker_f350365cf82e33445c62979c4756df83.bindPopup(popup_a9d2973d416c2a8c46fe00024c17574f)
+        marker_4994db1fde670e75f83e1e5951808ceb.bindPopup(popup_51820d6e37a241f768d87dea4bb6daac)
         ;
 
         
     
     
-            marker_f350365cf82e33445c62979c4756df83.bindTooltip(
+            marker_4994db1fde670e75f83e1e5951808ceb.bindTooltip(
                 `<div>
                      Hong Kong
                  </div>`,
@@ -278,28 +291,28 @@
             );
         
     
-            var poly_line_04a37441c54f685aaeb3a45550b2cfbc = L.polyline(
+            var poly_line_26a7e01fd265089d645bf768d998a8a2 = L.polyline(
                 [[22.3193, 114.1694], [1.3521, 103.8198]],
                 {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "red", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.7, "smoothFactor": 1.0, "stroke": true, "weight": 3}
-            ).addTo(map_96715c1c87db534b930a6bfd93248d39);
+            ).addTo(map_c47d1f60cac10ee636e79c7f78b78e91);
         
     
-        var popup_018e0871bf2ac691e6170c8ec0858b6f = L.popup({"maxWidth": "100%"});
+        var popup_adf1deb5fe1fcc70c31cab8f8d9a3544 = L.popup({"maxWidth": "100%"});
 
         
             
-                var html_f8cb0dcf8c0ae3859dd9525b999d4d01 = $(`<div id="html_f8cb0dcf8c0ae3859dd9525b999d4d01" style="width: 100.0%; height: 100.0%;">Hong Kong → Singapore</div>`)[0];
-                popup_018e0871bf2ac691e6170c8ec0858b6f.setContent(html_f8cb0dcf8c0ae3859dd9525b999d4d01);
+                var html_4b09b3be14477927ba2efb8f232b511e = $(`<div id="html_4b09b3be14477927ba2efb8f232b511e" style="width: 100.0%; height: 100.0%;">Hong Kong → Singapore</div>`)[0];
+                popup_adf1deb5fe1fcc70c31cab8f8d9a3544.setContent(html_4b09b3be14477927ba2efb8f232b511e);
             
         
 
-        poly_line_04a37441c54f685aaeb3a45550b2cfbc.bindPopup(popup_018e0871bf2ac691e6170c8ec0858b6f)
+        poly_line_26a7e01fd265089d645bf768d998a8a2.bindPopup(popup_adf1deb5fe1fcc70c31cab8f8d9a3544)
         ;
 
         
     
     
-            poly_line_04a37441c54f685aaeb3a45550b2cfbc.bindTooltip(
+            poly_line_26a7e01fd265089d645bf768d998a8a2.bindTooltip(
                 `<div>
                      6.09 hours, 465.50 kg CO2
                  </div>`,
@@ -307,34 +320,34 @@
             );
         
     
-            var marker_6ed987c00838540c12eeb81c63dafa66 = L.marker(
+            var marker_ef7b6490b8e15216fac27758a53142cb = L.marker(
                 [-33.8688, 151.2093],
                 {}
-            ).addTo(map_96715c1c87db534b930a6bfd93248d39);
+            ).addTo(map_c47d1f60cac10ee636e79c7f78b78e91);
         
     
-            var icon_9cc92c47e5f5608ed0591f80e266bed6 = L.AwesomeMarkers.icon(
+            var icon_e740a7d47549397c3c216b99fdda4057 = L.AwesomeMarkers.icon(
                 {"extraClasses": "fa-rotate-0", "icon": "building", "iconColor": "white", "markerColor": "blue", "prefix": "fa"}
             );
-            marker_6ed987c00838540c12eeb81c63dafa66.setIcon(icon_9cc92c47e5f5608ed0591f80e266bed6);
+            marker_ef7b6490b8e15216fac27758a53142cb.setIcon(icon_e740a7d47549397c3c216b99fdda4057);
         
     
-        var popup_bea446dd3c5e3fb33b4f2f96b779db55 = L.popup({"maxWidth": "100%"});
+        var popup_97dd18b7faf5efa6ee48858f19baf0ec = L.popup({"maxWidth": "100%"});
 
         
             
-                var html_2dc8bad7b86e5e638a7d2232816d46d0 = $(`<div id="html_2dc8bad7b86e5e638a7d2232816d46d0" style="width: 100.0%; height: 100.0%;"><b>Sydney</b><br>Travel Hours: 14.01<br>CO2: 3279.25 kg</div>`)[0];
-                popup_bea446dd3c5e3fb33b4f2f96b779db55.setContent(html_2dc8bad7b86e5e638a7d2232816d46d0);
+                var html_37d06b1c0180a0be0d2c83015f90ae08 = $(`<div id="html_37d06b1c0180a0be0d2c83015f90ae08" style="width: 100.0%; height: 100.0%;"><b>Sydney</b><br>Travel Hours: 14.01<br>CO2: 3279.25 kg</div>`)[0];
+                popup_97dd18b7faf5efa6ee48858f19baf0ec.setContent(html_37d06b1c0180a0be0d2c83015f90ae08);
             
         
 
-        marker_6ed987c00838540c12eeb81c63dafa66.bindPopup(popup_bea446dd3c5e3fb33b4f2f96b779db55)
+        marker_ef7b6490b8e15216fac27758a53142cb.bindPopup(popup_97dd18b7faf5efa6ee48858f19baf0ec)
         ;
 
         
     
     
-            marker_6ed987c00838540c12eeb81c63dafa66.bindTooltip(
+            marker_ef7b6490b8e15216fac27758a53142cb.bindTooltip(
                 `<div>
                      Sydney
                  </div>`,
@@ -342,28 +355,28 @@
             );
         
     
-            var poly_line_639db6d01f8ece08d5414a2f979ec30f = L.polyline(
+            var poly_line_af53043a699f2abf92bbd9e19a0d3ad6 = L.polyline(
                 [[-33.8688, 151.2093], [1.3521, 103.8198]],
                 {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "red", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.7, "smoothFactor": 1.0, "stroke": true, "weight": 3}
-            ).addTo(map_96715c1c87db534b930a6bfd93248d39);
+            ).addTo(map_c47d1f60cac10ee636e79c7f78b78e91);
         
     
-        var popup_483ac3a7f1b51d8ca6c110bed24e4104 = L.popup({"maxWidth": "100%"});
+        var popup_2681e1d1cb5306f244c236f956c58736 = L.popup({"maxWidth": "100%"});
 
         
             
-                var html_2c21e712558a29389ea660606db4d6c5 = $(`<div id="html_2c21e712558a29389ea660606db4d6c5" style="width: 100.0%; height: 100.0%;">Sydney → Singapore</div>`)[0];
-                popup_483ac3a7f1b51d8ca6c110bed24e4104.setContent(html_2c21e712558a29389ea660606db4d6c5);
+                var html_34c1d08017c2137eb7d5699e9a8b5ea2 = $(`<div id="html_34c1d08017c2137eb7d5699e9a8b5ea2" style="width: 100.0%; height: 100.0%;">Sydney → Singapore</div>`)[0];
+                popup_2681e1d1cb5306f244c236f956c58736.setContent(html_34c1d08017c2137eb7d5699e9a8b5ea2);
             
         
 
-        poly_line_639db6d01f8ece08d5414a2f979ec30f.bindPopup(popup_483ac3a7f1b51d8ca6c110bed24e4104)
+        poly_line_af53043a699f2abf92bbd9e19a0d3ad6.bindPopup(popup_2681e1d1cb5306f244c236f956c58736)
         ;
 
         
     
     
-            poly_line_639db6d01f8ece08d5414a2f979ec30f.bindTooltip(
+            poly_line_af53043a699f2abf92bbd9e19a0d3ad6.bindTooltip(
                 `<div>
                      14.01 hours, 3279.25 kg CO2
                  </div>`,
@@ -371,28 +384,28 @@
             );
         
     
-            var circle_marker_3c34afacfc76e8495f2c503ff5df31b3 = L.circleMarker(
+            var circle_marker_22c40dfab6e7933803ba687c13b4f0e1 = L.circleMarker(
                 [19.076, 72.8777],
                 {"bubblingMouseEvents": true, "color": "orange", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "orange", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
-            ).addTo(map_96715c1c87db534b930a6bfd93248d39);
+            ).addTo(map_c47d1f60cac10ee636e79c7f78b78e91);
         
     
-        var popup_b81131690c621bdaffe13f97f01b5c71 = L.popup({"maxWidth": "100%"});
+        var popup_d9856f1c33f36c64863d90753564cef1 = L.popup({"maxWidth": "100%"});
 
         
             
-                var html_7f18438a5011bac782038d0798070c4e = $(`<div id="html_7f18438a5011bac782038d0798070c4e" style="width: 100.0%; height: 100.0%;"><b>Alternative 1: Mumbai</b><br>CO2: 11729.47 kg<br>Avg Travel: 10.61 hours</div>`)[0];
-                popup_b81131690c621bdaffe13f97f01b5c71.setContent(html_7f18438a5011bac782038d0798070c4e);
+                var html_fcfab456ad00e909f34a28343adbbd5b = $(`<div id="html_fcfab456ad00e909f34a28343adbbd5b" style="width: 100.0%; height: 100.0%;"><b>Alternative 1: Mumbai</b><br>CO2: 11729.47 kg<br>Avg Travel: 10.61 hours</div>`)[0];
+                popup_d9856f1c33f36c64863d90753564cef1.setContent(html_fcfab456ad00e909f34a28343adbbd5b);
             
         
 
-        circle_marker_3c34afacfc76e8495f2c503ff5df31b3.bindPopup(popup_b81131690c621bdaffe13f97f01b5c71)
+        circle_marker_22c40dfab6e7933803ba687c13b4f0e1.bindPopup(popup_d9856f1c33f36c64863d90753564cef1)
         ;
 
         
     
     
-            circle_marker_3c34afacfc76e8495f2c503ff5df31b3.bindTooltip(
+            circle_marker_22c40dfab6e7933803ba687c13b4f0e1.bindTooltip(
                 `<div>
                      Alt 1: Mumbai
                  </div>`,
@@ -400,28 +413,28 @@
             );
         
     
-            var circle_marker_da311da63c040eccd50d49bfd440a568 = L.circleMarker(
+            var circle_marker_765fa3aa1aac4a20cef709bade7d41d2 = L.circleMarker(
                 [13.7563, 100.5018],
                 {"bubblingMouseEvents": true, "color": "orange", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "orange", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
-            ).addTo(map_96715c1c87db534b930a6bfd93248d39);
+            ).addTo(map_c47d1f60cac10ee636e79c7f78b78e91);
         
     
-        var popup_0ad7ca2505083164cc57ddbd3ca53de7 = L.popup({"maxWidth": "100%"});
+        var popup_9bc4ab7777bfd284d07c7ca96d84bfef = L.popup({"maxWidth": "100%"});
 
         
             
-                var html_dabfb3f905fb6b845856da35e8d8593d = $(`<div id="html_dabfb3f905fb6b845856da35e8d8593d" style="width: 100.0%; height: 100.0%;"><b>Alternative 2: Bangkok</b><br>CO2: 7199.73 kg<br>Avg Travel: 7.61 hours</div>`)[0];
-                popup_0ad7ca2505083164cc57ddbd3ca53de7.setContent(html_dabfb3f905fb6b845856da35e8d8593d);
+                var html_c9b5da765aeb15ba9df2d9e3e745a95d = $(`<div id="html_c9b5da765aeb15ba9df2d9e3e745a95d" style="width: 100.0%; height: 100.0%;"><b>Alternative 2: Bangkok</b><br>CO2: 7199.73 kg<br>Avg Travel: 7.61 hours</div>`)[0];
+                popup_9bc4ab7777bfd284d07c7ca96d84bfef.setContent(html_c9b5da765aeb15ba9df2d9e3e745a95d);
             
         
 
-        circle_marker_da311da63c040eccd50d49bfd440a568.bindPopup(popup_0ad7ca2505083164cc57ddbd3ca53de7)
+        circle_marker_765fa3aa1aac4a20cef709bade7d41d2.bindPopup(popup_9bc4ab7777bfd284d07c7ca96d84bfef)
         ;
 
         
     
     
-            circle_marker_da311da63c040eccd50d49bfd440a568.bindTooltip(
+            circle_marker_765fa3aa1aac4a20cef709bade7d41d2.bindTooltip(
                 `<div>
                      Alt 2: Bangkok
                  </div>`,
@@ -429,28 +442,28 @@
             );
         
     
-            var circle_marker_c4de2e02378962a2f704557f9b7eb282 = L.circleMarker(
+            var circle_marker_909cb23a92e990e707bac552b2bee76b = L.circleMarker(
                 [-6.2088, 106.8456],
                 {"bubblingMouseEvents": true, "color": "orange", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "orange", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
-            ).addTo(map_96715c1c87db534b930a6bfd93248d39);
+            ).addTo(map_c47d1f60cac10ee636e79c7f78b78e91);
         
     
-        var popup_ab7426c66be466cd9c0f71bc555da017 = L.popup({"maxWidth": "100%"});
+        var popup_44f8330a49f13ce356fbb9cba1009971 = L.popup({"maxWidth": "100%"});
 
         
             
-                var html_5bf11670b9681c0c3e26afc2038f8c9a = $(`<div id="html_5bf11670b9681c0c3e26afc2038f8c9a" style="width: 100.0%; height: 100.0%;"><b>Alternative 3: Jakarta</b><br>CO2: 9546.14 kg<br>Avg Travel: 8.79 hours</div>`)[0];
-                popup_ab7426c66be466cd9c0f71bc555da017.setContent(html_5bf11670b9681c0c3e26afc2038f8c9a);
+                var html_a6f68a7434a861d95261378923df5266 = $(`<div id="html_a6f68a7434a861d95261378923df5266" style="width: 100.0%; height: 100.0%;"><b>Alternative 3: Jakarta</b><br>CO2: 9546.14 kg<br>Avg Travel: 8.79 hours</div>`)[0];
+                popup_44f8330a49f13ce356fbb9cba1009971.setContent(html_a6f68a7434a861d95261378923df5266);
             
         
 
-        circle_marker_c4de2e02378962a2f704557f9b7eb282.bindPopup(popup_ab7426c66be466cd9c0f71bc555da017)
+        circle_marker_909cb23a92e990e707bac552b2bee76b.bindPopup(popup_44f8330a49f13ce356fbb9cba1009971)
         ;
 
         
     
     
-            circle_marker_c4de2e02378962a2f704557f9b7eb282.bindTooltip(
+            circle_marker_909cb23a92e990e707bac552b2bee76b.bindTooltip(
                 `<div>
                      Alt 3: Jakarta
                  </div>`,
@@ -458,28 +471,28 @@
             );
         
     
-            var circle_marker_618410053b68813eb1afba33ae942bb8 = L.circleMarker(
+            var circle_marker_13a14397b494391d6aeffd0107596602 = L.circleMarker(
                 [14.5995, 120.9842],
                 {"bubblingMouseEvents": true, "color": "orange", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "orange", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
-            ).addTo(map_96715c1c87db534b930a6bfd93248d39);
+            ).addTo(map_c47d1f60cac10ee636e79c7f78b78e91);
         
     
-        var popup_022687e4b04fc8be3af8cf8448aa21e7 = L.popup({"maxWidth": "100%"});
+        var popup_e0d3eaaf005c6f814f5b4b293ff9c5a8 = L.popup({"maxWidth": "100%"});
 
         
             
-                var html_0d3de657a6b782ea2891f5e45f216397 = $(`<div id="html_0d3de657a6b782ea2891f5e45f216397" style="width: 100.0%; height: 100.0%;"><b>Alternative 4: Manila</b><br>CO2: 7915.57 kg<br>Avg Travel: 7.59 hours</div>`)[0];
-                popup_022687e4b04fc8be3af8cf8448aa21e7.setContent(html_0d3de657a6b782ea2891f5e45f216397);
+                var html_af997d2badf087b0b1acd3d7211c605a = $(`<div id="html_af997d2badf087b0b1acd3d7211c605a" style="width: 100.0%; height: 100.0%;"><b>Alternative 4: Manila</b><br>CO2: 7915.57 kg<br>Avg Travel: 7.59 hours</div>`)[0];
+                popup_e0d3eaaf005c6f814f5b4b293ff9c5a8.setContent(html_af997d2badf087b0b1acd3d7211c605a);
             
         
 
-        circle_marker_618410053b68813eb1afba33ae942bb8.bindPopup(popup_022687e4b04fc8be3af8cf8448aa21e7)
+        circle_marker_13a14397b494391d6aeffd0107596602.bindPopup(popup_e0d3eaaf005c6f814f5b4b293ff9c5a8)
         ;
 
         
     
     
-            circle_marker_618410053b68813eb1afba33ae942bb8.bindTooltip(
+            circle_marker_13a14397b494391d6aeffd0107596602.bindTooltip(
                 `<div>
                      Alt 4: Manila
                  </div>`,
@@ -487,28 +500,28 @@
             );
         
     
-            var circle_marker_06d15e68739eb4d185aa8d3b75ed2d3b = L.circleMarker(
+            var circle_marker_6289b963f809f73c2e5d16a21d01727a = L.circleMarker(
                 [-33.8688, 151.2093],
                 {"bubblingMouseEvents": true, "color": "orange", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "orange", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
-            ).addTo(map_96715c1c87db534b930a6bfd93248d39);
+            ).addTo(map_c47d1f60cac10ee636e79c7f78b78e91);
         
     
-        var popup_20f9423c721056d97dd254b73751ad87 = L.popup({"maxWidth": "100%"});
+        var popup_86ba876fc40f8151bffdc1bb1b46d291 = L.popup({"maxWidth": "100%"});
 
         
             
-                var html_d14d14eb1212a6354bc7243ec23d2d01 = $(`<div id="html_d14d14eb1212a6354bc7243ec23d2d01" style="width: 100.0%; height: 100.0%;"><b>Alternative 5: Sydney</b><br>CO2: 16625.94 kg<br>Avg Travel: 14.10 hours</div>`)[0];
-                popup_20f9423c721056d97dd254b73751ad87.setContent(html_d14d14eb1212a6354bc7243ec23d2d01);
+                var html_08feaf3154c23ff4d4ce2c3b3f8d28a2 = $(`<div id="html_08feaf3154c23ff4d4ce2c3b3f8d28a2" style="width: 100.0%; height: 100.0%;"><b>Alternative 5: Sydney</b><br>CO2: 16625.94 kg<br>Avg Travel: 14.10 hours</div>`)[0];
+                popup_86ba876fc40f8151bffdc1bb1b46d291.setContent(html_08feaf3154c23ff4d4ce2c3b3f8d28a2);
             
         
 
-        circle_marker_06d15e68739eb4d185aa8d3b75ed2d3b.bindPopup(popup_20f9423c721056d97dd254b73751ad87)
+        circle_marker_6289b963f809f73c2e5d16a21d01727a.bindPopup(popup_86ba876fc40f8151bffdc1bb1b46d291)
         ;
 
         
     
     
-            circle_marker_06d15e68739eb4d185aa8d3b75ed2d3b.bindTooltip(
+            circle_marker_6289b963f809f73c2e5d16a21d01727a.bindTooltip(
                 `<div>
                      Alt 5: Sydney
                  </div>`,
