@@ -168,10 +168,12 @@ class MeetingOptimizer:
         R = 6371  # Earth radius in km
         lat1, lon1 = math.radians(loc1.lat), math.radians(loc1.lon)
         lat2, lon2 = math.radians(loc2.lat), math.radians(loc2.lon)
-        
+        # Use the shortest longitudinal difference (normalize to [-pi, pi]) to avoid
+        # choosing the long way around the globe when longitudes cross the antimeridian.
         dlat = lat2 - lat1
         dlon = lon2 - lon1
-        
+        dlon = (dlon + math.pi) % (2 * math.pi) - math.pi
+
         a = math.sin(dlat/2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon/2)**2
         c = 2 * math.asin(math.sqrt(a))
         
